@@ -34,11 +34,6 @@ def calculateFitness(state):
     return validPairs
 
 
-def setFitnessOfPopulation():
-    for i in range(populationSize):
-        population[i].fitness = calculateFitness(population[i].state)
-
-
 def getParent(population, totalFitness):
     # Generate a random number between 0 and totalFitness
     probability = random.randint(0, totalFitness)
@@ -97,6 +92,20 @@ def cutAndSpliceCrossover(parentOne, parentTwo):
     childOne = parentOne[0:crossoverPointOne + 1] + parentTwo[crossoverPointTwo + 1:]
     childTwo = parentTwo[0:crossoverPointOne + 1] + parentOne[crossoverPointTwo + 1:]
 
+    if len(childOne) > 8:
+        childOne = childOne[0:8]
+    elif len(childOne) < 8:
+        for i in range(8 - len(childOne)):
+            randomNumber = random.randint(1, 8)
+            childOne = childOne + str(randomNumber)
+
+    if len(childTwo) > 8:
+        childTwo = childTwo[0:8]
+    elif len(childOne) < 8:
+        for i in range(8 - len(childTwo)):
+            randomNumber = random.randint(1, 8)
+            childTwo = childTwo + str(randomNumber)
+
     return [childOne, childTwo]
 
 
@@ -123,7 +132,7 @@ def reproduce(parentOne, parentTwo, crossover):
     elif (crossover == TWO_POINT):
         children = twoPointCrossover(parentOne, parentTwo)
     elif (crossover == CUT_AND_SPLICE):
-        children = (parentOne, parentTwo)
+        children = cutAndSpliceCrossover(parentOne, parentTwo)
     elif (crossover == UNIFORM):
         children = uniformCrossover(parentOne, parentTwo)
 
@@ -146,6 +155,7 @@ TWO_POINT = 1
 CUT_AND_SPLICE = 2
 UNIFORM = 3
 
+
 validSolution = "82417536"
 invalidSolution = "43254323"
 population = [Chromosome("24748552"), Chromosome("32752411"), Chromosome("24415124"),
@@ -154,9 +164,8 @@ populationSize = 4
 selectionSize = 2
 mutationRate = 0.4
 iterationAmount = -1
-crossover = 3
+crossover = 2
 
-setFitnessOfPopulation()
 while population[0].fitness < 28:
     print(population[0].fitness)
     print(population[0].state)
